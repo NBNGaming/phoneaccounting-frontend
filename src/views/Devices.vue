@@ -183,10 +183,11 @@ export default defineComponent({
       <span v-else>&mdash;</span>
     </template>
     <template v-slot:item.sdcard="{ item }">
-      <v-chip>
+      <v-chip v-if="item.raw.sdSlotsCount > 0">
         <v-icon size="small" class="me-2">mdi-sd</v-icon>
         {{ item.raw.sdcard }}
       </v-chip>
+      <span v-else>&mdash;</span>
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
@@ -236,12 +237,6 @@ export default defineComponent({
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                v-model="editedItem.sdcard"
-                label="SD"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" sm="6" md="4">
-              <v-text-field
                 v-model="editedItem.user"
                 label="У кого"
               ></v-text-field>
@@ -281,6 +276,19 @@ export default defineComponent({
               <v-text-field
                 v-model.number="editedItem.simcard2"
                 label="SIM 2"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6" md="4">
+              <v-text-field
+                v-model.number="editedItem.sdSlotsCount"
+                label="Количество лотков для SD"
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6" md="4" v-show="editedItem.sdSlotsCount > 0">
+              <v-text-field
+                v-model="editedItem.sdcard"
+                label="SD"
               ></v-text-field>
             </v-col>
           </v-row>
