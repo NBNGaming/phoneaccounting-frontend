@@ -13,6 +13,9 @@ import { createApp } from 'vue'
 // Plugins
 import { registerPlugins } from '@/plugins'
 
+import axios from 'axios'
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL
+
 const app = createApp(App)
 
 registerPlugins(app)
