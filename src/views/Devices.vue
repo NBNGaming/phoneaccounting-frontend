@@ -171,10 +171,11 @@ export default defineComponent({
   >
     <template v-slot:item.simcards="{ item }">
       <div class="py-2" v-if="item.raw.simSlotsCount > 0">
-        <v-chip class="mb-2 me-md-2 mb-md-0" v-if="item.raw.simSlotsCount >= 1">
+        <v-chip class="mb-2" v-if="item.raw.simSlotsCount >= 1">
           <v-icon size="small" class="me-2">mdi-sim</v-icon>
           {{ item.raw.simcard1 }}
         </v-chip>
+        <br>
         <v-chip v-if="item.raw.simSlotsCount >= 2">
           <v-icon size="small" class="me-2">mdi-sim</v-icon>
           {{ item.raw.simcard2 }}
