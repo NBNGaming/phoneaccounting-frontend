@@ -51,11 +51,11 @@ export default defineComponent({
       });
     },
 
-    // editItem(item) {
-    //   this.editedIndex = this.sdcards.indexOf(item);
-    //   this.editedItem = Object.assign({}, item);
-    //   this.dialog = true;
-    // },
+    editItem(item) {
+      this.editedIndex = this.sdcards.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+    },
 
     deleteItem(item) {
       this.editedIndex = this.sdcards.indexOf(item);
@@ -90,14 +90,12 @@ export default defineComponent({
 
     save() {
       if (this.editedIndex > -1) {
-        // axios.put('/sdcards/update/sdcard/' + this.sdcards[this.editedIndex].id, this.editedItem.locked, {
-        //   headers: {'Content-Type': 'text/plain'},
-        // }).then(() => {
-        //   this.sdcards[this.editedIndex].locked = this.editedItem.locked;
-        //   this.close();
-        // }).catch(error => {
-        //   console.error(error);
-        // });
+        axios.put(`/sdcards/${this.sdcards[this.editedIndex].id}/`, this.editedItem).then(() => {
+          Object.assign(this.sdcards[this.editedIndex], this.editedItem);
+          this.close();
+        }).catch(error => {
+          console.error(error);
+        });
       } else {
         axios.post('/sdcards/', this.editedItem).then(() => {
           this.close();
@@ -148,14 +146,14 @@ export default defineComponent({
       {{ item.raw.in_phone ? 'Да' : 'Нет' }}
     </template>
     <template v-slot:item.actions="{ item }">
-<!--      <v-icon-->
-<!--        size="small"-->
-<!--        class="me-2"-->
-<!--        title="Изменить статус блокировки"-->
-<!--        @click="editItem(item.raw)"-->
-<!--      >-->
-<!--        mdi-lock-->
-<!--      </v-icon>-->
+      <v-icon
+        size="small"
+        class="me-2"
+        title="Редактировать"
+        @click="editItem(item.raw)"
+      >
+        mdi-pencil
+      </v-icon>
       <v-icon
         size="small"
         title="Удалить"
@@ -175,12 +173,7 @@ export default defineComponent({
 
       <v-card-text>
         <v-container v-show="dialog">
-          <v-text-field
-            v-model="editedItem.locked"
-            label="Заблокирована"
-            v-if="editedIndex > -1"
-          ></v-text-field>
-          <v-row v-else>
+          <v-row>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
                 v-model="editedItem.name"

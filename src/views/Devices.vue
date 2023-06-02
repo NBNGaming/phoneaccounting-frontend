@@ -118,10 +118,17 @@ export default defineComponent({
 
     save() {
       if (this.editedIndex > -1) {
-        axios.patch(`/phones/${this.phones[this.editedIndex].id}/`, {
-          user: this.editedItem.user,
-        }).then(() => {
-          this.phones[this.editedIndex].user = this.editedItem.user;
+        if (this.editedItem.sim_slots_count < 1) {
+          this.editedItem.simcard1 = '';
+          this.editedItem.simcard2 = '';
+        } else if (this.editedItem.sim_slots_count < 2) {
+          this.editedItem.simcard2 = '';
+        }
+        if (this.editedItem.sd_slots_count < 1) {
+          this.editedItem.sdcard_serial_number = '';
+        }
+        axios.put(`/phones/${this.phones[this.editedIndex].id}/`, this.editedItem).then(() => {
+          Object.assign(this.phones[this.editedIndex], this.editedItem);
           this.close();
         }).catch(error => {
           console.error(error);
@@ -197,10 +204,10 @@ export default defineComponent({
       <v-icon
         size="small"
         class="me-2"
-        title="Изменить пользователя"
+        title="Редактировать"
         @click="editItem(item.raw)"
       >
-        mdi-account
+        mdi-pencil
       </v-icon>
       <v-icon
         size="small"
@@ -221,12 +228,7 @@ export default defineComponent({
 
       <v-card-text>
         <v-container v-show="dialog">
-          <v-text-field
-            v-model="editedItem.user"
-            label="У кого"
-            v-if="editedIndex > -1"
-          ></v-text-field>
-          <v-row v-else>
+          <v-row>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
                 v-model="editedItem.manufacturer"

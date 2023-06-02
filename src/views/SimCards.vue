@@ -90,10 +90,8 @@ export default defineComponent({
 
     save() {
       if (this.editedIndex > -1) {
-        axios.patch(`/simcards/${this.simcards[this.editedIndex].id}/`, {
-          locked: this.editedItem.locked,
-        }).then(() => {
-          this.simcards[this.editedIndex].locked = this.editedItem.locked;
+        axios.put(`/simcards/${this.simcards[this.editedIndex].id}/`, this.editedItem).then(() => {
+          Object.assign(this.simcards[this.editedIndex], this.editedItem);
           this.close();
         }).catch(error => {
           console.error(error);
@@ -154,10 +152,10 @@ export default defineComponent({
       <v-icon
         size="small"
         class="me-2"
-        title="Изменить статус блокировки"
+        title="Редактировать"
         @click="editItem(item.raw)"
       >
-        mdi-lock
+        mdi-pencil
       </v-icon>
       <v-icon
         size="small"
@@ -178,12 +176,7 @@ export default defineComponent({
 
       <v-card-text>
         <v-container v-show="dialog">
-          <v-checkbox
-            v-model="editedItem.locked"
-            label="Заблокирована"
-            v-if="editedIndex > -1"
-          ></v-checkbox>
-          <v-row v-else>
+          <v-row>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
                 v-model="editedItem.operator_name"
