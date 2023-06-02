@@ -16,6 +16,16 @@ const routes = [
         name: 'Notifications',
         component: () => import('@/views/Notifications.vue'),
       },
+      {
+        path: 'simcards',
+        name: 'SimCards',
+        component: () => import('@/views/SimCards.vue'),
+      },
+      {
+        path: 'sdcards',
+        name: 'SdCards',
+        component: () => import('@/views/SdCards.vue'),
+      },
     ],
   },
 ]

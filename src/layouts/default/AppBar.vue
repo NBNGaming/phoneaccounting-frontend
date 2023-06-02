@@ -20,6 +20,14 @@ export default defineComponent({
           title: 'Уведомления',
           value: 'Notifications'
         },
+        {
+          title: 'SIM карты',
+          value: 'SimCards'
+        },
+        {
+          title: 'SD карты',
+          value: 'SdCards'
+        },
       ],
     };
   },

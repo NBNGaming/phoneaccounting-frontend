@@ -42,7 +42,7 @@ export default defineComponent({
 
 <template>
   <v-text-field
-    class="mb-4"
+    class="mb-4 w-50"
     v-model="search"
     prepend-icon="mdi-magnify"
     label="Поиск"
