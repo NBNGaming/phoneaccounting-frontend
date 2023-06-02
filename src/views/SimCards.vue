@@ -8,13 +8,13 @@ export default defineComponent({
       search: '',
       simcards: [],
       headers: [
-        {title: 'Оператор связи', key: 'operatorName'},
+        {title: 'Оператор связи', key: 'operator_name'},
         {
           title: 'Номер',
           key: 'number',
           sortable: false,
         },
-        {title: 'В устройстве', key: 'inPhone'},
+        {title: 'В устройстве', key: 'in_phone'},
         {title: 'Заблокирована', key: 'locked'},
         {
           title: 'Действия',
@@ -26,16 +26,16 @@ export default defineComponent({
       dialogDelete: false,
       editedIndex: -1,
       editedItem: {
-        operatorName: '',
+        operator_name: '',
         number: '',
-        locked: '',
-        inPhone: '',
+        locked: false,
+        in_phone: false,
       },
       defaultItem: {
-        operatorName: '',
+        operator_name: '',
         number: '',
-        locked: '',
-        inPhone: '',
+        locked: false,
+        in_phone: false,
       },
     };
   },
@@ -44,7 +44,7 @@ export default defineComponent({
   },
   methods: {
     fetchData() {
-      axios.get('/simcards/all').then(response => {
+      axios.get('/simcards/').then(response => {
         this.simcards = response.data;
       }).catch(error => {
         console.error(error);
@@ -64,7 +64,7 @@ export default defineComponent({
     },
 
     deleteItemConfirm() {
-      axios.delete('/simcards/delete/simcard/' + this.simcards[this.editedIndex].simcardId).then(() => {
+      axios.delete(`/simcards/${this.simcards[this.editedIndex].id}/`).then(() => {
         this.simcards.splice(this.editedIndex, 1);
         this.closeDelete();
       }).catch(error => {
@@ -90,8 +90,8 @@ export default defineComponent({
 
     save() {
       if (this.editedIndex > -1) {
-        axios.put('/simcards/update/simcard/' + this.simcards[this.editedIndex].simcardId, this.editedItem.locked, {
-          headers: {'Content-Type': 'text/plain'},
+        axios.patch(`/simcards/${this.simcards[this.editedIndex].id}/`, {
+          locked: this.editedItem.locked,
         }).then(() => {
           this.simcards[this.editedIndex].locked = this.editedItem.locked;
           this.close();
@@ -99,7 +99,7 @@ export default defineComponent({
           console.error(error);
         });
       } else {
-        axios.post('/simcards/add/simcard', this.editedItem).then(() => {
+        axios.post('/simcards/', this.editedItem).then(() => {
           this.close();
           this.fetchData();
         }).catch(error => {
@@ -141,14 +141,14 @@ export default defineComponent({
     :headers="headers"
     :items="simcards"
     :search="search"
-    item-value="simcardId"
+    item-value="id"
     class="elevation-1"
   >
-    <template v-slot:item.inPhone="{ item }">
-      {{ item.raw.inPhone === '1' ? 'Да' : (item.raw.inPhone === '-1' ? 'Нет' : item.raw.inPhone) }}
+    <template v-slot:item.in_phone="{ item }">
+      {{ item.raw.in_phone ? 'Да' : 'Нет' }}
     </template>
     <template v-slot:item.locked="{ item }">
-      {{ item.raw.locked === '1' ? 'Да' : (item.raw.locked === '-1' ? 'Нет' : item.raw.locked) }}
+      {{ item.raw.locked ? 'Да' : 'Нет' }}
     </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
@@ -178,15 +178,15 @@ export default defineComponent({
 
       <v-card-text>
         <v-container v-show="dialog">
-          <v-text-field
+          <v-checkbox
             v-model="editedItem.locked"
             label="Заблокирована"
             v-if="editedIndex > -1"
-          ></v-text-field>
+          ></v-checkbox>
           <v-row v-else>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                v-model="editedItem.operatorName"
+                v-model="editedItem.operator_name"
                 label="Оператор связи"
               ></v-text-field>
             </v-col>
@@ -196,18 +196,14 @@ export default defineComponent({
                 label="Номер"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" sm="6" md="4">
-              <v-text-field
-                v-model="editedItem.inPhone"
-                label="В устройстве"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" sm="6" md="4">
-              <v-text-field
-                v-model="editedItem.locked"
-                label="Заблокирована"
-              ></v-text-field>
-            </v-col>
+            <v-checkbox
+              v-model="editedItem.in_phone"
+              label="В устройстве"
+            ></v-checkbox>
+            <v-checkbox
+              v-model="editedItem.locked"
+              label="Заблокирована"
+            ></v-checkbox>
           </v-row>
         </v-container>
       </v-card-text>

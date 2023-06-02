@@ -11,11 +11,11 @@ export default defineComponent({
         {title: 'Имя', key: 'name'},
         {
           title: 'Серийный номер',
-          key: 'serialNumber',
+          key: 'serial_number',
           sortable: false,
         },
         {title: 'Размер', key: 'size'},
-        {title: 'В устройстве', key: 'inPhone'},
+        {title: 'В устройстве', key: 'in_phone'},
         {
           title: 'Действия',
           key: 'actions',
@@ -27,15 +27,15 @@ export default defineComponent({
       editedIndex: -1,
       editedItem: {
         name: '',
-        serialNumber: '',
+        serial_number: '',
         size: '',
-        inPhone: '',
+        in_phone: false,
       },
       defaultItem: {
         name: '',
-        serialNumber: '',
+        serial_number: '',
         size: '',
-        inPhone: '',
+        in_phone: false,
       },
     };
   },
@@ -44,7 +44,7 @@ export default defineComponent({
   },
   methods: {
     fetchData() {
-      axios.get('/sdcards/all').then(response => {
+      axios.get('/sdcards/').then(response => {
         this.sdcards = response.data;
       }).catch(error => {
         console.error(error);
@@ -64,7 +64,7 @@ export default defineComponent({
     },
 
     deleteItemConfirm() {
-      axios.delete('/sdcards/delete/sdcard/' + this.sdcards[this.editedIndex].sdcardId).then(() => {
+      axios.delete(`/sdcards/${this.sdcards[this.editedIndex].id}/`).then(() => {
         this.sdcards.splice(this.editedIndex, 1);
         this.closeDelete();
       }).catch(error => {
@@ -90,7 +90,7 @@ export default defineComponent({
 
     save() {
       if (this.editedIndex > -1) {
-        // axios.put('/sdcards/update/sdcard/' + this.sdcards[this.editedIndex].sdcardId, this.editedItem.locked, {
+        // axios.put('/sdcards/update/sdcard/' + this.sdcards[this.editedIndex].id, this.editedItem.locked, {
         //   headers: {'Content-Type': 'text/plain'},
         // }).then(() => {
         //   this.sdcards[this.editedIndex].locked = this.editedItem.locked;
@@ -99,7 +99,7 @@ export default defineComponent({
         //   console.error(error);
         // });
       } else {
-        axios.post('/sdcards/add/sdcard', this.editedItem).then(() => {
+        axios.post('/sdcards/', this.editedItem).then(() => {
           this.close();
           this.fetchData();
         }).catch(error => {
@@ -141,11 +141,11 @@ export default defineComponent({
     :headers="headers"
     :items="sdcards"
     :search="search"
-    item-value="sdcardId"
+    item-value="id"
     class="elevation-1"
   >
-    <template v-slot:item.inPhone="{ item }">
-      {{ item.raw.inPhone === '1' ? 'Да' : (item.raw.inPhone === '-1' ? 'Нет' : item.raw.inPhone) }}
+    <template v-slot:item.in_phone="{ item }">
+      {{ item.raw.in_phone ? 'Да' : 'Нет' }}
     </template>
     <template v-slot:item.actions="{ item }">
 <!--      <v-icon-->
@@ -189,7 +189,7 @@ export default defineComponent({
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                v-model="editedItem.serialNumber"
+                v-model="editedItem.serial_number"
                 label="Серийный номер"
               ></v-text-field>
             </v-col>
@@ -200,10 +200,10 @@ export default defineComponent({
               ></v-text-field>
             </v-col>
             <v-col cols="12" sm="6" md="4">
-              <v-text-field
-                v-model="editedItem.inPhone"
+              <v-checkbox
+                v-model="editedItem.in_phone"
                 label="В устройстве"
-              ></v-text-field>
+              ></v-checkbox>
             </v-col>
           </v-row>
         </v-container>

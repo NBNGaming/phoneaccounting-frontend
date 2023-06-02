@@ -8,11 +8,11 @@ export default defineComponent({
       search: '',
       notifications: [],
       headers: [
-        {title: 'Приложение', key: 'packageName'},
+        {title: 'Приложение', key: 'package_name'},
         {title: 'Заголовок', key: 'title'},
         {
           title: 'Текст',
-          key: 'notificationText',
+          key: 'text',
           sortable: false,
         },
       ],
@@ -30,7 +30,7 @@ export default defineComponent({
   },
   methods: {
     fetchData() {
-      axios.get('/notifications/all').then(response => {
+      axios.get('/notifications/').then(response => {
         this.notifications = response.data;
       }).catch(error => {
         console.error(error);
@@ -53,8 +53,8 @@ export default defineComponent({
     :headers="headers"
     :items="notifications"
     :search="search"
-    :sort-by="[{ key: 'notificationId', order: 'desc' }]"
-    item-value="notificationId"
+    :sort-by="[{ key: 'id', order: 'desc' }]"
+    item-value="id"
     class="elevation-1"
   >
     <template v-slot:no-data>

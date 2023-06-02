@@ -17,14 +17,14 @@ export default defineComponent({
         },
         {
           title: 'SD',
-          key: 'sdcardSerialNumber',
+          key: 'sdcard_serial_number',
           sortable: false,
         },
         {title: 'У кого', key: 'user'},
-        {title: 'Версия ОС', key: 'convertedOsVersion'},
-        {title: 'Версия API', key: 'osVersion'},
+        {title: 'Версия ОС', key: 'converted_os_version'},
+        {title: 'Версия API', key: 'os_version'},
         {title: 'Прошивка', key: 'firmware'},
-        {title: 'Архитектуры', key: 'supportedArch'},
+        {title: 'Архитектуры', key: 'supported_arch'},
         {
           title: 'Действия',
           key: 'actions',
@@ -37,30 +37,30 @@ export default defineComponent({
       editedItem: {
         model: '',
         manufacturer: '',
-        osVersion: '',
-        convertedOsVersion: '',
+        os_version: '',
+        converted_os_version: '',
         firmware: '',
-        supportedArch: '',
+        supported_arch: '',
         user: '',
-        simSlotsCount: 0,
+        sim_slots_count: 0,
         simcard1: '',
         simcard2: '',
-        sdSlotsCount: 0,
-        sdcardSerialNumber: '',
+        sd_slots_count: 0,
+        sdcard_serial_number: '',
       },
       defaultItem: {
         model: '',
         manufacturer: '',
-        osVersion: '',
-        convertedOsVersion: '',
+        os_version: '',
+        converted_os_version: '',
         firmware: '',
-        supportedArch: '',
+        supported_arch: '',
         user: '',
-        simSlotsCount: 0,
+        sim_slots_count: 0,
         simcard1: '',
         simcard2: '',
-        sdSlotsCount: 0,
-        sdcardSerialNumber: '',
+        sd_slots_count: 0,
+        sdcard_serial_number: '',
       },
     };
   },
@@ -69,7 +69,7 @@ export default defineComponent({
   },
   methods: {
     fetchData() {
-      axios.get('/phones/all').then(response => {
+      axios.get('/phones/').then(response => {
         response.data.forEach(phone => {
           phone.simcards = [phone.simcard1, phone.simcard2];
         });
@@ -92,7 +92,7 @@ export default defineComponent({
     },
 
     deleteItemConfirm() {
-      axios.delete('/phones/delete/phone/' + this.phones[this.editedIndex].phoneId).then(() => {
+      axios.delete(`/phones/${this.phones[this.editedIndex].id}/`).then(() => {
         this.phones.splice(this.editedIndex, 1);
         this.closeDelete();
       }).catch(error => {
@@ -118,8 +118,8 @@ export default defineComponent({
 
     save() {
       if (this.editedIndex > -1) {
-        axios.put('/phones/update/user/' + this.phones[this.editedIndex].phoneId, this.editedItem.user, {
-          headers: {'Content-Type': 'text/plain'},
+        axios.patch(`/phones/${this.phones[this.editedIndex].id}/`, {
+          user: this.editedItem.user,
         }).then(() => {
           this.phones[this.editedIndex].user = this.editedItem.user;
           this.close();
@@ -127,7 +127,7 @@ export default defineComponent({
           console.error(error);
         });
       } else {
-        axios.post('/phones/add/phone', this.editedItem).then(() => {
+        axios.post('/phones/', this.editedItem).then(() => {
           this.close();
           this.fetchData();
         }).catch(error => {
@@ -169,27 +169,27 @@ export default defineComponent({
     :headers="headers"
     :items="phones"
     :search="search"
-    item-value="phoneId"
+    item-value="id"
     class="elevation-1"
   >
     <template v-slot:item.simcards="{ item }">
-      <div class="py-2" v-if="item.raw.simSlotsCount > 0">
-        <v-chip class="mb-2" v-if="item.raw.simSlotsCount >= 1">
+      <div class="py-2" v-if="item.raw.sim_slots_count > 0">
+        <v-chip class="mb-2" v-if="item.raw.sim_slots_count >= 1">
           <v-icon size="small" class="me-2">mdi-sim</v-icon>
           {{ item.raw.simcard1 }}
         </v-chip>
         <br>
-        <v-chip v-if="item.raw.simSlotsCount >= 2">
+        <v-chip v-if="item.raw.sim_slots_count >= 2">
           <v-icon size="small" class="me-2">mdi-sim</v-icon>
           {{ item.raw.simcard2 }}
         </v-chip>
       </div>
       <span v-else>&mdash;</span>
     </template>
-    <template v-slot:item.sdcardSerialNumber="{ item }">
-      <v-chip v-if="item.raw.sdSlotsCount > 0">
+    <template v-slot:item.sdcard_serial_number="{ item }">
+      <v-chip v-if="item.raw.sd_slots_count > 0">
         <v-icon size="small" class="me-2">mdi-sd</v-icon>
-        {{ item.raw.sdcardSerialNumber }}
+        {{ item.raw.sdcard_serial_number }}
       </v-chip>
       <span v-else>&mdash;</span>
     </template>
@@ -247,13 +247,13 @@ export default defineComponent({
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                v-model="editedItem.convertedOsVersion"
+                v-model="editedItem.converted_os_version"
                 label="Версия ОС"
               ></v-text-field>
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                v-model="editedItem.osVersion"
+                v-model="editedItem.os_version"
                 label="Версия API"
               ></v-text-field>
             </v-col>
@@ -265,24 +265,24 @@ export default defineComponent({
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                v-model="editedItem.supportedArch"
+                v-model="editedItem.supported_arch"
                 label="Архитектуры"
               ></v-text-field>
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                v-model.number="editedItem.simSlotsCount"
+                v-model.number="editedItem.sim_slots_count"
                 label="Количество лотков для SIM"
                 hide-details
               ></v-text-field>
             </v-col>
-            <v-col cols="12" sm="6" md="4" v-show="editedItem.simSlotsCount >= 1">
+            <v-col cols="12" sm="6" md="4" v-show="editedItem.sim_slots_count >= 1">
               <v-text-field
                 v-model.number="editedItem.simcard1"
                 label="SIM 1"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" sm="6" md="4" v-show="editedItem.simSlotsCount >= 2">
+            <v-col cols="12" sm="6" md="4" v-show="editedItem.sim_slots_count >= 2">
               <v-text-field
                 v-model.number="editedItem.simcard2"
                 label="SIM 2"
@@ -290,14 +290,14 @@ export default defineComponent({
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                v-model.number="editedItem.sdSlotsCount"
+                v-model.number="editedItem.sd_slots_count"
                 label="Количество лотков для SD"
                 hide-details
               ></v-text-field>
             </v-col>
-            <v-col cols="12" sm="6" md="4" v-show="editedItem.sdSlotsCount > 0">
+            <v-col cols="12" sm="6" md="4" v-show="editedItem.sd_slots_count > 0">
               <v-text-field
-                v-model="editedItem.sdcardSerialNumber"
+                v-model="editedItem.sdcard_serial_number"
                 label="SD"
               ></v-text-field>
             </v-col>
