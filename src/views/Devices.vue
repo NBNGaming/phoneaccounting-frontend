@@ -17,11 +17,12 @@ export default defineComponent({
         },
         {
           title: 'SD',
-          key: 'sdcard',
+          key: 'sdcardSerialNumber',
           sortable: false,
         },
         {title: 'У кого', key: 'user'},
-        {title: 'Версия ОС', key: 'osVersion'},
+        {title: 'Версия ОС', key: 'convertedOsVersion'},
+        {title: 'Версия API', key: 'osVersion'},
         {title: 'Прошивка', key: 'firmware'},
         {title: 'Архитектуры', key: 'supportedArch'},
         {
@@ -37,6 +38,7 @@ export default defineComponent({
         model: '',
         manufacturer: '',
         osVersion: '',
+        convertedOsVersion: '',
         firmware: '',
         supportedArch: '',
         user: '',
@@ -44,12 +46,13 @@ export default defineComponent({
         simcard1: '',
         simcard2: '',
         sdSlotsCount: 0,
-        sdcard: '',
+        sdcardSerialNumber: '',
       },
       defaultItem: {
         model: '',
         manufacturer: '',
         osVersion: '',
+        convertedOsVersion: '',
         firmware: '',
         supportedArch: '',
         user: '',
@@ -57,7 +60,7 @@ export default defineComponent({
         simcard1: '',
         simcard2: '',
         sdSlotsCount: 0,
-        sdcard: '',
+        sdcardSerialNumber: '',
       },
     };
   },
@@ -183,10 +186,10 @@ export default defineComponent({
       </div>
       <span v-else>&mdash;</span>
     </template>
-    <template v-slot:item.sdcard="{ item }">
+    <template v-slot:item.sdcardSerialNumber="{ item }">
       <v-chip v-if="item.raw.sdSlotsCount > 0">
         <v-icon size="small" class="me-2">mdi-sd</v-icon>
-        {{ item.raw.sdcard }}
+        {{ item.raw.sdcardSerialNumber }}
       </v-chip>
       <span v-else>&mdash;</span>
     </template>
@@ -244,8 +247,14 @@ export default defineComponent({
             </v-col>
             <v-col cols="12" sm="6" md="4">
               <v-text-field
-                v-model="editedItem.osVersion"
+                v-model="editedItem.convertedOsVersion"
                 label="Версия ОС"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6" md="4">
+              <v-text-field
+                v-model="editedItem.osVersion"
+                label="Версия API"
               ></v-text-field>
             </v-col>
             <v-col cols="12" sm="6" md="4">
@@ -288,7 +297,7 @@ export default defineComponent({
             </v-col>
             <v-col cols="12" sm="6" md="4" v-show="editedItem.sdSlotsCount > 0">
               <v-text-field
-                v-model="editedItem.sdcard"
+                v-model="editedItem.sdcardSerialNumber"
                 label="SD"
               ></v-text-field>
             </v-col>
